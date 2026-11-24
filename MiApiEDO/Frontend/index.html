@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelos de Ecuaciones Diferenciales</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* --- ESTILOS GENERALES Y FONDO DE SNOPPY --- */
+        * { box-sizing: border-box; }
+        
+        body { 
+            background-image: url('descarga (2).jpg'); 
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-color: #EEF2F8;
+            font-family: 'Tw Cen MT', 'Segoe UI', sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+        }
+        
+        /* Contenedor principal transparente */
+        .main-container { 
+            background: transparent; 
+            border-radius: 18px; 
+            padding: 10px; 
+            width: 100%; 
+            max-width: 950px; 
+            box-shadow: none; 
+            position: relative; 
+            overflow: hidden; 
+            min-height: 650px; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        .panel { display: none; width: 100%; height: 100%; flex-direction: column; }
+        .panel.active { display: flex; }
+
+        /* --- PANEL 1: INICIO --- */
+        #panel-inicio { 
+            background-image: url('descarga (1).jpg'); 
+            background-size: cover; 
+            background-position: right center; 
+            background-repeat: no-repeat; 
+            justify-content: center; 
+            align-items: center; 
+            border-radius: 15px;
+            min-height: 550px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            margin-top: 40px; 
+        }
+        
+        .inicio-content { 
+            background: rgba(255, 255, 255, 0.92); 
+            padding: 30px 40px; 
+            border-radius: 15px; 
+            text-align: center; 
+            width: 100%; 
+            max-width: 450px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        h1 { font-family: 'Rockwell Extra Bold', 'Tw Cen MT Condensed Extra Bold', serif; color: #17365D; font-size: 32px; margin-bottom: 10px; }
+        .subtitulo { font-size: 18px; color: #333; margin-bottom: 25px; }
+        
+        /* --- BOTONES DE RADIO --- */
+        .radio-group { 
+            text-align: left; 
+            margin-bottom: 25px; 
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; 
+            padding-left: 40px; 
+        }
+        .radio-group label { 
+            display: flex; 
+            align-items: center;
+            font-size: 18px; 
+            margin: 10px 0; 
+            cursor: pointer; 
+        }
+        .radio-group input[type="radio"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* --- BOTONES --- */
+        button { 
+            background-color: #2563EB; color: white; font-size: 16px; padding: 12px 25px; 
+            border: none; border-radius: 5px; cursor: pointer; margin: 5px; 
+            font-family: 'Tw Cen MT', sans-serif; transition: background 0.2s; 
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        }
+        button:hover { background-color: #1E40AF; }
+        button.gris { background-color: #64748B; }
+        button.gris:hover { background-color: #475569; }
+        button.exito { background-color: #10B981; } 
+        button.exito:hover { background-color: #059669; }
+
+        /* --- PANEL 2: DATOS --- */
+        #panel-datos { 
+            background: transparent; 
+            border-radius: 15px; 
+            padding: 20px; 
+            overflow-y: auto; 
+        }
+        
+        .datos-content { 
+            background: transparent; 
+            padding: 10px; 
+            border-radius: 15px; 
+            max-width: 700px; 
+            margin: 0 auto; 
+            box-shadow: none; 
+        }
+        
+        #titulo-datos {
+            color: #17365D;
+            text-shadow: 2px 2px 4px rgba(255,255,255,1), -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; 
+            text-align: center;
+            font-size: 32px;
+        }
+
+        .ecuacion-box { 
+            background-color: rgba(239, 246, 255, 0.9); 
+            border-radius: 10px; padding: 15px; margin: 20px 0; 
+            text-align: center; font-size: 24px; font-family: 'Trebuchet MS', sans-serif; 
+            border: 1px solid rgba(203, 213, 225, 0.7); 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px; }
+        .col { flex: 1; min-width: 200px; }
+        
+        label { 
+            font-family: 'Tw Cen MT Condensed Extra Bold', sans-serif; 
+            font-size: 20px; 
+            color: #0f172a; 
+            display: block; 
+            margin-bottom: 5px; 
+            text-shadow: 1px 1px 3px rgba(255,255,255,1), -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+        }
+        
+        input { 
+            width: 100%; 
+            padding: 10px; 
+            font-size: 16px; 
+            background: rgba(255, 255, 255, 0.9); 
+            border: 2px solid #94A3B8; 
+            border-radius: 5px; 
+            box-sizing: border-box; 
+            margin-bottom: 15px; 
+            font-family: 'Segoe UI', sans-serif; 
+            font-weight: bold;
+            color: #17365D;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 1);
+            border-color: #2563EB;
+        }
+
+        .nota { 
+            color: #0f172a; 
+            font-size: 16px; 
+            font-weight: bold; 
+            margin: 15px 0; 
+            text-shadow: 1px 1px 3px rgba(255,255,255,1), -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+            text-align: center;
+        }
+
+        /* --- PANEL 3: RESULTADOS --- */
+        #panel-resultados { background: transparent; }
+        .resultados-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .resultados-header h2 { color: #17365D; font-size: 32px; margin: 0; text-shadow: 1px 1px 3px rgba(255,255,255,1);}
+        .texto-resultado { font-size: 16px; margin-bottom: 15px; white-space: pre-line; background: rgba(255,255,255,0.95); padding: 15px; border-radius: 5px; border: 1px solid #CBD5E1; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .grafica-container { background: rgba(255,255,255,0.95); border: 1px solid #CBD5E1; border-radius: 5px; padding: 15px; margin-bottom: 15px; height: 500px; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; background: rgba(255,255,255,0.95); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        th, td { border: 1px solid #CBD5E1; padding: 8px; text-align: center; }
+        th { background: #EFF6FF; color: #17365D; font-family: 'Tw Cen MT Condensed Extra Bold', sans-serif; }
+        .botones-accion { display: flex; justify-content: flex-end; margin-top: 10px; }
+        #error { color: #DC2626; text-align: center; font-weight: bold; margin-top: 10px; background: rgba(255,255,255,0.9); padding: 5px; border-radius: 5px; }
+        .campo-segundo-orden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <!-- PANEL 1 -->
+    <div id="panel-inicio" class="panel active">
+        <div class="inicio-content">
+            <h1>EDOs de Primer<br>y Segundo Orden</h1>
+            <p class="subtitulo">Selecciona el orden de tu modelo</p>
+            <div class="radio-group">
+                <label><input type="radio" name="orden" value="1" checked onchange="actualizarOrden()"> Modelo de primer orden</label>
+                <label><input type="radio" name="orden" value="2" onchange="actualizarOrden()"> Modelo de segundo orden</label>
+            </div>
+            <button onclick="mostrarPanel('panel-datos')">Continuar</button>
+        </div>
+    </div>
+
+    <!-- PANEL 2 -->
+    <div id="panel-datos" class="panel">
+        <div class="datos-content">
+            <h1 id="titulo-datos">Datos del modelo</h1>
+            <div class="ecuacion-box" id="ecuacion-modelo">a x′ + b x = Us</div>
+            <p style="font-size: 22px; text-align: center; margin-bottom: 20px; color: #0f172a; text-shadow: 1px 1px 3px rgba(255,255,255,1), -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; font-weight: bold;">
+                Introduce los coeficientes y condiciones iniciales.
+            </p>
+            <div class="row">
+                <div class="col">
+                    <label>Coeficiente a:</label><input type="number" id="a" value="1" step="any">
+                    <div class="campo-segundo-orden"><label>Coeficiente c:</label><input type="number" id="c" value="10" step="any"></div>
+                    <label>Condición inicial x(0):</label><input type="number" id="x0" value="5" step="any">
+                    <label>Tiempo final:</label><input type="number" id="tf" value="10" step="any">
+                </div>
+                <div class="col">
+                    <label>Coeficiente b:</label><input type="number" id="b" value="1" step="any">
+                    <label>Término independiente Us:</label><input type="number" id="f" value="0" step="any">
+                    <div class="campo-segundo-orden"><label>Condición inicial x′(0):</label><input type="number" id="v0" value="0" step="any"></div>
+                    <label>Número de pasos:</label><input type="number" id="pasos" value="1000" step="1">
+                </div>
+            </div>
+            <p class="nota">El número de pasos indica en cuántas partes se divide el tiempo para calcular la solución.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                <button class="gris" onclick="mostrarPanel('panel-inicio')">Regresar</button>
+                <button onclick="calcular()" id="btn-calcular">Calcular</button>
+            </div>
+            <div id="error"></div>
+        </div>
+    </div>
+
+    <!-- PANEL 3 -->
+    <div id="panel-resultados" class="panel">
+        <h2 style="color: #17365D; margin-bottom: 15px; text-shadow: 1px 1px 3px rgba(255,255,255,1);">Resultados del modelo</h2>
+        <div class="texto-resultado" id="texto-resultado"></div>
+        <div class="grafica-container"><canvas id="grafica"></canvas></div>
+        <table><thead><tr><th>Tiempo t</th><th>Resultado x(t)</th></tr></thead><tbody id="tabla-body"></tbody></table>
+        <div class="botones-accion">
+            <!-- BOTÓN DE EXCEL -->
+            <button class="exito" onclick="exportarExcel()">Exportar a Excel</button>
+            
+            <button class="gris" onclick="mostrarPanel('panel-datos')">Modificar datos</button>
+            <button onclick="mostrarPanel('panel-inicio')">Volver al inicio</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ⚠️ IMPORTANTE: AQUÍ DEBES PONER TU URL DE SWAGGER CON TU PUERTO
+    const API_URL = "https://localhost:7219/api/calculadora/resolver"; 
+    
+    let miGrafica = null;
+    let ordenActual = 1;
+
+    function mostrarPanel(id) {
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function actualizarOrden() {
+        ordenActual = document.querySelector('input[name="orden"]:checked').value;
+        const esSegundo = ordenActual === "2";
+        document.querySelectorAll('.campo-segundo-orden').forEach(el => el.style.display = esSegundo ? 'block' : 'none');
+        document.getElementById('titulo-datos').innerText = esSegundo ? "Datos del modelo de segundo orden" : "Datos del modelo de primer orden";
+        document.getElementById('ecuacion-modelo').innerText = esSegundo ? "a x″ + b x′ + c x = Us" : "a x′ + b x = Us";
+    }
+
+    async function calcular() {
+        const btn = document.getElementById('btn-calcular');
+        const errorDiv = document.getElementById('error');
+        errorDiv.innerText = "";
+        btn.innerText = "Calculando...";
+        btn.disabled = true;
+        const esSegundo = ordenActual === "2";
+
+        const peticion = {
+            a: parseFloat(document.getElementById("a").value),
+            b: parseFloat(document.getElementById("b").value),
+            c: esSegundo ? parseFloat(document.getElementById("c").value) : 0,
+            f: parseFloat(document.getElementById("f").value),
+            x0: parseFloat(document.getElementById("x0").value),
+            v0: esSegundo ? parseFloat(document.getElementById("v0").value) : 0,
+            tf: parseFloat(document.getElementById("tf").value),
+            pasos: parseInt(document.getElementById("pasos").value),
+            segundoOrden: esSegundo
+        };
+
+        try {
+            const respuesta = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(peticion)
+            });
+
+            if (!respuesta.ok) {
+                const err = await respuesta.json();
+                throw new Error(err.mensaje || "Error en el servidor");
+            }
+
+            const datos = await respuesta.json();
+            const ecuacionStr = esSegundo ? `(${peticion.a})x″ + (${peticion.b})x′ + (${peticion.c})x = ${peticion.f}` : `(${peticion.a})x′ + (${peticion.b})x = ${peticion.f}`;
+            let condStr = `x(0) = ${peticion.x0}`;
+            if (esSegundo) condStr += `; x′(0) = ${peticion.v0}`;
+            const ultimo = datos[datos.length - 1];
+            document.getElementById("texto-resultado").innerText = `${ecuacionStr}\n${condStr}\nResultado numérico: x(${peticion.tf}) ≈ ${ultimo.valor.toExponential(6)}`;
+
+            dibujarResultados(datos);
+            mostrarPanel('panel-resultados');
+
+        } catch (error) {
+            errorDiv.innerText = "⚠️ " + error.message;
+        } finally {
+            btn.innerText = "Calcular";
+            btn.disabled = false;
+        }
+    }
+
+    function dibujarResultados(datos) {
+        const etiquetas = datos.map(d => d.tiempo.toFixed(2));
+        const valores = datos.map(d => d.valor);
+        const ctx = document.getElementById("grafica").getContext("2d");
+        if (miGrafica) miGrafica.destroy();
+
+        miGrafica = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: etiquetas,
+                datasets: [{ label: 'x(t)', data: valores, borderColor: '#2563EB', backgroundColor: 'rgba(37, 99, 235, 0.1)', borderWidth: 2, pointRadius: 0, fill: true }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { x: { title: { display: true, text: 'Tiempo t' } }, y: { title: { display: true, text: 'x(t)' } } }
+            }
+        });
+
+        const tbody = document.getElementById("tabla-body");
+        tbody.innerHTML = "";
+        datos.slice(0, 50).forEach(d => {
+            tbody.innerHTML += `<tr><td>${d.tiempo.toFixed(5)}</td><td>${d.valor.toExponential(4)}</td></tr>`;
+        });
+    }
+
+    // NUEVA FUNCIÓN PARA EXPORTAR A EXCEL
+    function exportarExcel() {
+        if (!miGrafica || !miGrafica.data || miGrafica.data.labels.length === 0) {
+            alert("Primero debes calcular un resultado para poder exportar.");
+            return;
+        }
+
+        const etiquetas = miGrafica.data.labels;
+        const valores = miGrafica.data.datasets[0].data;
+
+        let csvContent = "\uFEFFTiempo t,Resultado x(t)\n";
+
+        for (let i = 0; i < etiquetas.length; i++) {
+            const tiempo = parseFloat(etiquetas[i]).toFixed(5);
+            const valor = parseFloat(valores[i]).toFixed(8);
+            csvContent += `${tiempo},${valor}\n`;
+        }
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "Resultados_EDO.csv"); 
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+</body>
+</html>

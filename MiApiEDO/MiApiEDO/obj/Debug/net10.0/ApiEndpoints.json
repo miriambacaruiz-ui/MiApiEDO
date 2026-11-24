@@ -1,0 +1,18 @@
+[
+  {
+    "ContainingType": "MiApiEDO.Controllers.CalculadoraController",
+    "Method": "Resolver",
+    "RelativePath": "api/Calculadora/resolver",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "MiApiEDO.Controllers.CalculadoraController\u002BPeticionEDO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

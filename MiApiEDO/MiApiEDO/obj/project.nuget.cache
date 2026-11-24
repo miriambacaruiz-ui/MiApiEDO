@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "ZuQU+5daImk=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\vaqui\\source\\repos\\MiApiEDO\\MiApiEDO\\MiApiEDO.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\vaqui\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.15\\microsoft.aspnetcore.openapi.10.0.15.nupkg.sha512",
+    "C:\\Users\\vaqui\\.nuget\\packages\\microsoft.openapi\\2.13.0\\microsoft.openapi.2.13.0.nupkg.sha512"
+  ],
+  "logs": []
+}
